@@ -1,0 +1,100 @@
+name: 🐛 Bug report
+description: Something doesn't work as expected.
+title: "[bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report.
+        **Please redact any API keys or tokens from your output.** Use `***` placeholders.
+
+  - type: input
+    id: action-version
+    attributes:
+      label: Action / package version
+      placeholder: "e.g. ecodrix/erix-buddy@v1.2.3 or @ecodrix/erix-buddy@0.2.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: provider
+    attributes:
+      label: LLM provider
+      options:
+        - gemini
+        - vertex
+        - openai
+        - anthropic
+        - ollama
+        - openrouter
+        - groq
+        - azure-openai
+        - deepseek
+        - mistral
+        - xai
+        - ecodrix
+    validations:
+      required: true
+
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      placeholder: "e.g. gemini-2.5-flash, gpt-4o-mini, claude-3-5-sonnet"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Where did you hit this?
+      options:
+        - GitHub Actions
+        - Local CLI (npx / pnpm dlx / bunx)
+        - GitLab CI
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: workflow-snippet
+    attributes:
+      label: Workflow / command
+      description: Paste the workflow YAML or CLI command. Redact secrets.
+      render: yaml
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / output
+      description: Run with `--verbose` if possible. Redact any sensitive info.
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: search
+    attributes:
+      label: Confirmation
+      options:
+        - label: I searched existing issues and didn't find a duplicate.
+          required: true
+        - label: I redacted any API keys, tokens, or secrets from the report.
+          required: true

@@ -1,3 +1,6 @@
+# Canonical PR review workflow.
+# Drop into .github/workflows/erix-review.yml
+
 name: AI Code Review
 
 on:
@@ -8,20 +11,29 @@ permissions:
   contents: read
   pull-requests: write
 
+# Cancel previous review when a new push lands on the same PR
+concurrency:
+  group: erix-review-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  erix-review:
-    if: github.event.pull_request.draft == false
+  review:
+    name: Erix AI Review
+    if: |
+      github.event.pull_request.draft == false &&
+      !contains(github.event.pull_request.labels.*.name, 'skip-review')
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0   # full history for branch diffs
 
-      - name: Erix Buddy AI Code Reviewer
+      - name: Erix AI Code Reviewer
         uses: ecodrix/erix-buddy@v1
         with:
-          # Pick any provider you have a key for. Examples:
-          provider: gemini                    # gemini | openai | anthropic | groq | openrouter | ollama | ...
+          # Pick any provider you have a key for. Swap as needed.
+          provider: gemini
           api-key: ${{ secrets.GEMINI_API_KEY }}
           mode: branch
           branch: origin/${{ github.base_ref }}
@@ -29,6 +41,6 @@ jobs:
           fail-on-blocking: "true"
           post-pr-comment: "true"
           custom-instructions: |
-            Enforce strict TypeScript types.
+            Multi-tenant SaaS — every database query must include tenantId.
             Public functions must have JSDoc.
             Reject changes that drop tenant scoping.

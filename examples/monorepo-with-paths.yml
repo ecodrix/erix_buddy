@@ -1,0 +1,59 @@
+# Monorepo workflow that only reviews packages whose files changed.
+# Each package gets its own review job so token use is proportional to scope.
+#
+# Drop into .github/workflows/monorepo-review.yml
+
+name: Monorepo AI Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.filter.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            api: 'apps/api/**'
+            web: 'apps/web/**'
+            shared: 'packages/shared/**'
+            ui: 'packages/ui/**'
+
+  review:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.packages != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJSON(needs.detect-changes.outputs.packages) }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - uses: ecodrix/erix-buddy@v1
+        with:
+          provider: gemini
+          api-key: ${{ secrets.GEMINI_API_KEY }}
+          mode: branch
+          branch: origin/${{ github.base_ref }}
+          severity: minor
+          # Each package's review only looks at its own files
+          paths: |
+            apps/${{ matrix.package }}
+            packages/${{ matrix.package }}
+          report-path: review-${{ matrix.package }}.md
+          custom-instructions: |
+            You are reviewing the "${{ matrix.package }}" package only.
+            Ignore changes outside this package's directory.

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/ecodrix/erix-buddy/discussions
+    about: Ask a question, share a recipe, or chat about architecture.
+  - name: 🔒 Security
+    url: https://github.com/ecodrix/erix-buddy/security/policy
+    about: Report a security vulnerability privately.
+  - name: 📚 Docs
+    url: https://github.com/ecodrix/erix-buddy#-documentation
+    about: Read the docs first — your question may already be answered.

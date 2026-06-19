@@ -1,0 +1,40 @@
+name: 💡 Feature request
+description: Suggest a new feature, provider, or recipe.
+title: "[feature] "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to accomplish? Why is it valuable?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed solution
+      description: A concrete sketch of how it would work — flags, action inputs, file changes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - New LLM provider
+        - New report format
+        - New CI integration
+        - CLI ergonomics
+        - GitHub Action input / behaviour
+        - Documentation / recipe
+        - Other
+    validations:
+      required: true

@@ -1,0 +1,45 @@
+# 100% local AI review using Ollama on a self-hosted runner.
+# No code or diff ever leaves your network.
+#
+# Prerequisites:
+#   1. A self-hosted GitHub runner registered in your repo.
+#   2. Ollama running on (or reachable from) the runner: `ollama serve`.
+#   3. The model pulled: `ollama pull qwen2.5-coder:7b`.
+
+name: AI Code Review (Ollama)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    if: github.event.pull_request.draft == false
+    runs-on: self-hosted   # ← change to your runner label
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Verify Ollama is reachable
+        run: |
+          curl -fs http://localhost:11434/api/tags > /dev/null \
+            && echo "Ollama is up" \
+            || (echo "Ollama not reachable at localhost:11434" && exit 1)
+
+      - uses: ecodrix/erix-buddy@v1
+        with:
+          provider: ollama
+          model: qwen2.5-coder:7b      # or llama3.1:8b, deepseek-r1:14b, etc.
+          base-url: http://localhost:11434
+          mode: branch
+          branch: origin/${{ github.base_ref }}
+          severity: minor
+          # Ollama is slower than hosted providers — keep concurrency low
+          concurrency: 2
+          fail-on-blocking: "true"
+          post-pr-comment: "true"

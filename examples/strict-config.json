@@ -1,0 +1,18 @@
+{
+  "model": "claude-3-5-sonnet-latest",
+  "concurrency": 2,
+  "severityThreshold": "minor",
+  "enableWalkthrough": true,
+  "enableMermaid": true,
+  "enableArchitectureReview": true,
+  "enableTestCoverage": true,
+  "categories": [
+    "security",
+    "correctness",
+    "performance",
+    "architecture",
+    "testing"
+  ],
+  "ignorePatterns": ["tests/.*", "src/generated/.*"],
+  "customInstructions": "STRICT MODE: Reject any change that drops error handling. Every public function must have JSDoc. Every database query must include tenant scoping. No `any` in TypeScript without an explanatory comment. Treat security issues as critical regardless of perceived severity."
+}

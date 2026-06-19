@@ -1,0 +1,65 @@
+# Compare review quality across multiple providers in parallel.
+# Useful when evaluating which model to settle on, or for high-stakes PRs.
+#
+# Drop into .github/workflows/matrix-review.yml
+
+name: Multi-Provider AI Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: gemini
+            provider: gemini
+            model: gemini-2.5-flash
+            secret: GEMINI_API_KEY
+          - id: openai
+            provider: openai
+            model: gpt-4o-mini
+            secret: OPENAI_API_KEY
+          - id: claude
+            provider: anthropic
+            model: claude-3-5-sonnet-latest
+            secret: ANTHROPIC_API_KEY
+          - id: groq
+            provider: groq
+            model: llama-3.3-70b-versatile
+            secret: GROQ_API_KEY
+
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - uses: ecodrix/erix-buddy@v1
+        with:
+          provider: ${{ matrix.provider }}
+          model: ${{ matrix.model }}
+          api-key: ${{ secrets[matrix.secret] }}
+          mode: branch
+          branch: origin/${{ github.base_ref }}
+          severity: minor
+          fail-on-blocking: "false"
+          # Each provider posts under its own marker so comments don't collide
+          post-pr-comment: "true"
+          report-path: review-${{ matrix.id }}.md
+          custom-instructions: |
+            You are reviewer #${{ matrix.id }}. Be concise.
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: review-${{ matrix.id }}
+          path: review-${{ matrix.id }}.md

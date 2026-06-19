@@ -1,0 +1,62 @@
+# Nightly full-codebase audit.
+# Surfaces architectural drift, security gaps, and untested code that
+# accumulate over time but don't trigger PR-level reviews.
+#
+# Drop into .github/workflows/nightly-audit.yml
+
+name: Nightly AI Audit
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   # 03:00 UTC every day
+  workflow_dispatch:        # also allow manual runs
+
+permissions:
+  contents: read
+  issues: write             # to open audit-summary issues
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - uses: ecodrix/erix-buddy@v1
+        id: review
+        with:
+          provider: gemini
+          api-key: ${{ secrets.GEMINI_API_KEY }}
+          model: gemini-2.5-flash
+          mode: full
+          full-root: src
+          severity: major
+          max-files: 300
+          fail-on-blocking: "false"          # nightly should never fail the build
+          post-pr-comment: "false"           # no PR context here
+          report-path: nightly-audit.md
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-audit-${{ github.run_id }}
+          path: nightly-audit.md
+          retention-days: 30
+
+      - name: Open / update audit issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TITLE="🔍 Nightly Audit — $(date -u +'%Y-%m-%d')"
+          BODY=$(cat nightly-audit.md)
+          # Find or create a single rolling issue per quarter
+          QUARTER="$(date -u +'%Y-Q')$(( ($(date -u +'%-m') + 2) / 3 ))"
+          gh issue list --label "audit,$QUARTER" --state open --json number --jq '.[0].number' > /tmp/iss
+          if [ -s /tmp/iss ]; then
+            gh issue comment "$(cat /tmp/iss)" --body "$BODY"
+          else
+            gh issue create --title "$TITLE" --label "audit,$QUARTER" --body "$BODY"
+          fi

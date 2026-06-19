@@ -1,0 +1,27 @@
+# Erix Buddy ignore file.
+# Same syntax as .gitignore. Lines starting with `re:` are treated as regex.
+# Drop into your repo root as `.erixignore`.
+
+# Generated code
+src/generated/**
+**/__generated__/**
+**/__snapshots__/**
+
+# Vendor / third-party copies
+vendor/**
+third_party/**
+
+# Build artefacts
+dist/**
+build/**
+.next/**
+.turbo/**
+.cache/**
+
+# Tests (we don't review tests by default; remove this if you want to)
+re:.*\.test\.ts$
+re:.*\.spec\.ts$
+re:.*\.test\.py$
+
+# Migrations are usually intentional
+**/migrations/**
