@@ -6,6 +6,7 @@ branding:
   color: "purple"
 
 inputs:
+  # ── Provider & auth ──────────────────────────────────────────────────────
   provider:
     description: "LLM provider id: gemini | vertex | openai | anthropic | ollama | openrouter | groq | azure-openai | deepseek | mistral | xai | ecodrix"
     required: false
@@ -16,6 +17,21 @@ inputs:
   model:
     description: "Model id (provider-specific). Falls back to the provider's recommended default."
     required: false
+  base-url:
+    description: "Override the provider's API base URL (Azure / Ollama / custom relays)"
+    required: false
+  vertex-project:
+    description: "Google Cloud project id (only for provider=vertex)"
+    required: false
+  vertex-location:
+    description: "Vertex AI region (only for provider=vertex)"
+    required: false
+    default: "us-central1"
+  azure-deployment:
+    description: "Azure OpenAI deployment name (only for provider=azure-openai)"
+    required: false
+
+  # ── Review scope ─────────────────────────────────────────────────────────
   mode:
     description: "Review mode: branch | staged | last | unstaged | full | audit"
     required: false
@@ -24,10 +40,26 @@ inputs:
     description: "Base branch ref to diff against in branch mode"
     required: false
     default: "origin/main"
+  full-root:
+    description: "Subdirectory root for full-codebase audit mode"
+    required: false
+    default: "."
+  paths:
+    description: "Comma- or newline-separated path filters (regex/substring) for audit mode"
+    required: false
+  max-files:
+    description: "Cap files reviewed in audit mode"
+    required: false
+    default: "500"
+
+  # ── Output controls ──────────────────────────────────────────────────────
   severity:
     description: "Minimum severity to report: critical | major | minor | nitpick | info"
     required: false
     default: "minor"
+  categories:
+    description: "Comma-separated list of categories to surface (security,correctness,performance,maintainability,style,testing,documentation,architecture,accessibility,design-system). Defaults to all."
+    required: false
   concurrency:
     description: "Parallel file reviews"
     required: false
@@ -40,37 +72,47 @@ inputs:
     description: "Exit non-zero when critical/major issues are found"
     required: false
     default: "true"
+
+  # ── Pipeline toggles (skip individual phases) ────────────────────────────
+  no-walkthrough:
+    description: "Skip the PR walkthrough generation phase (saves one LLM call)"
+    required: false
+    default: "false"
+  no-mermaid:
+    description: "Skip the mermaid sequence diagram in the walkthrough"
+    required: false
+    default: "false"
+  no-architecture:
+    description: "Skip the cross-cutting architecture pass (saves one LLM call)"
+    required: false
+    default: "false"
+  no-tests:
+    description: "Skip generating test-coverage gap suggestions"
+    required: false
+    default: "false"
+
+  # ── Customisation ────────────────────────────────────────────────────────
+  custom-instructions:
+    description: "Free-form project-specific guidelines injected into the system prompt"
+    required: false
+  custom-instructions-file:
+    description: "Path to a file in the repo whose contents become the customInstructions. Useful for multi-line prompts that don't fit cleanly in YAML."
+    required: false
+
+  # ── PR posting ───────────────────────────────────────────────────────────
   post-pr-comment:
     description: "Post (or update) a sticky PR comment with the markdown report"
     required: false
     default: "true"
-  custom-instructions:
-    description: "Free-form project-specific guidelines injected into the system prompt"
+  github-token:
+    description: "Override GITHUB_TOKEN for PR comment posting (e.g. when using a GitHub App token with elevated permissions)"
     required: false
-  full-root:
-    description: "Subdirectory root for full-codebase audit mode"
+
+  # ── Diagnostics ──────────────────────────────────────────────────────────
+  verbose:
+    description: "Enable verbose logging in the underlying CLI (--verbose). Useful for debugging schema-validation retries."
     required: false
-    default: "."
-  paths:
-    description: "Comma- or newline-separated path filters (regex/substring) for audit mode"
-    required: false
-  max-files:
-    description: "Cap files reviewed in audit mode"
-    required: false
-    default: "500"
-  vertex-project:
-    description: "Google Cloud project id (only for provider=vertex)"
-    required: false
-  vertex-location:
-    description: "Vertex AI region (only for provider=vertex)"
-    required: false
-    default: "us-central1"
-  base-url:
-    description: "Override the provider's API base URL (Azure / Ollama / custom relays)"
-    required: false
-  azure-deployment:
-    description: "Azure OpenAI deployment name (only for provider=azure-openai)"
-    required: false
+    default: "false"
 
 outputs:
   report-path:
@@ -84,21 +126,44 @@ runs:
       run: npx -y --package=@ecodrix/erix-buddy erix-buddy-action
       shell: bash
       env:
+        # Provider & auth
         INPUT_PROVIDER: ${{ inputs.provider }}
         INPUT_API_KEY: ${{ inputs.api-key }}
         INPUT_MODEL: ${{ inputs.model }}
+        INPUT_BASE_URL: ${{ inputs.base-url }}
+        INPUT_VERTEX_PROJECT: ${{ inputs.vertex-project }}
+        INPUT_VERTEX_LOCATION: ${{ inputs.vertex-location }}
+        INPUT_AZURE_DEPLOYMENT: ${{ inputs.azure-deployment }}
+
+        # Review scope
         INPUT_MODE: ${{ inputs.mode }}
         INPUT_BRANCH: ${{ inputs.branch }}
-        INPUT_SEVERITY: ${{ inputs.severity }}
-        INPUT_CONCURRENCY: ${{ inputs.concurrency }}
-        INPUT_REPORT_PATH: ${{ inputs.report-path }}
-        INPUT_FAIL_ON_BLOCKING: ${{ inputs.fail-on-blocking }}
-        INPUT_POST_PR_COMMENT: ${{ inputs.post-pr-comment }}
-        INPUT_CUSTOM_INSTRUCTIONS: ${{ inputs.custom-instructions }}
         INPUT_FULL_ROOT: ${{ inputs.full-root }}
         INPUT_PATHS: ${{ inputs.paths }}
         INPUT_MAX_FILES: ${{ inputs.max-files }}
-        INPUT_VERTEX_PROJECT: ${{ inputs.vertex-project }}
-        INPUT_VERTEX_LOCATION: ${{ inputs.vertex-location }}
-        INPUT_BASE_URL: ${{ inputs.base-url }}
-        INPUT_AZURE_DEPLOYMENT: ${{ inputs.azure-deployment }}
+
+        # Output
+        INPUT_SEVERITY: ${{ inputs.severity }}
+        INPUT_CATEGORIES: ${{ inputs.categories }}
+        INPUT_CONCURRENCY: ${{ inputs.concurrency }}
+        INPUT_REPORT_PATH: ${{ inputs.report-path }}
+        INPUT_FAIL_ON_BLOCKING: ${{ inputs.fail-on-blocking }}
+
+        # Pipeline toggles
+        INPUT_NO_WALKTHROUGH: ${{ inputs.no-walkthrough }}
+        INPUT_NO_MERMAID: ${{ inputs.no-mermaid }}
+        INPUT_NO_ARCHITECTURE: ${{ inputs.no-architecture }}
+        INPUT_NO_TESTS: ${{ inputs.no-tests }}
+
+        # Customisation
+        INPUT_CUSTOM_INSTRUCTIONS: ${{ inputs.custom-instructions }}
+        INPUT_CUSTOM_INSTRUCTIONS_FILE: ${{ inputs.custom-instructions-file }}
+
+        # PR posting
+        INPUT_POST_PR_COMMENT: ${{ inputs.post-pr-comment }}
+        # The composite action auto-prefers the explicit input; fall back to the
+        # implicit GITHUB_TOKEN that GitHub injects into runners.
+        GITHUB_TOKEN: ${{ inputs.github-token || github.token }}
+
+        # Diagnostics
+        INPUT_VERBOSE: ${{ inputs.verbose }}

@@ -1,0 +1,49 @@
+# Bitbucket Pipelines integration.
+# Drop into bitbucket-pipelines.yml at the repo root.
+#
+# Bitbucket has no equivalent of the GitHub Action manifest, so we run the
+# CLI directly via npx. The reviewer doesn't post a sticky Bitbucket comment
+# yet (ROADMAP #14) — for now the markdown report is uploaded as an artifact
+# you can read from the PR build.
+
+image: node:20
+
+pipelines:
+  pull-requests:
+    "**":
+      - step:
+          name: Erix AI Code Review
+          caches:
+            - node
+          script:
+            # Make sure we have the full history for branch diffs.
+            - git fetch --depth=0 origin "$BITBUCKET_PR_DESTINATION_BRANCH"
+            - export GEMINI_API_KEY="$GEMINI_API_KEY"
+            - >
+              npx --yes @ecodrix/erix-buddy
+              --branch "origin/$BITBUCKET_PR_DESTINATION_BRANCH"
+              --severity minor
+              --format markdown,console
+          artifacts:
+            - code-review-report.md
+
+  custom:
+    erix-audit-nightly:
+      - step:
+          name: Nightly AI Audit
+          script:
+            - >
+              npx --yes @ecodrix/erix-buddy
+              --full
+              --severity major
+              --max-files 300
+              -o nightly-audit.md
+          artifacts:
+            - nightly-audit.md
+
+# To trigger the nightly audit, add a Bitbucket scheduled run pointing at the
+# `erix-audit-nightly` custom pipeline (Repository settings → Pipelines →
+# Schedules).
+#
+# Set `GEMINI_API_KEY` (or any other provider key) under
+# Repository settings → Repository variables (Secured).

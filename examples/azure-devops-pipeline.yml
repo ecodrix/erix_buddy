@@ -1,0 +1,63 @@
+# Azure DevOps Pipelines integration.
+# Drop into azure-pipelines.yml at the repo root.
+#
+# Azure DevOps doesn't reuse GitHub Actions; we run the CLI via npx.
+# A native Azure DevOps PR-thread reporter is on the roadmap (#14).
+# Until then, the markdown report is published as a build artifact you can
+# review from the PR's "Tests + Artifacts" panel.
+
+trigger: none
+
+pr:
+  branches:
+    include:
+      - main
+      - develop
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  # Set GEMINI_API_KEY (or any other provider key) as a SECRET pipeline variable
+  # under Pipeline → Edit → Variables. Mark it "Keep this value secret".
+  NODE_VERSION: "20"
+
+steps:
+  - checkout: self
+    fetchDepth: 0      # full history for branch diffs
+
+  - task: NodeTool@0
+    inputs:
+      versionSpec: $(NODE_VERSION)
+    displayName: "Use Node $(NODE_VERSION)"
+
+  - script: |
+      set -e
+      git fetch origin "$(System.PullRequest.TargetBranch)" --depth=0
+      npx --yes @ecodrix/erix-buddy \
+        --branch "origin/$(System.PullRequest.TargetBranch)" \
+        --severity minor \
+        --format markdown,console
+    env:
+      GEMINI_API_KEY: $(GEMINI_API_KEY)   # secret pipeline variable
+    displayName: "Erix AI Code Review"
+
+  - task: PublishBuildArtifacts@1
+    condition: always()
+    inputs:
+      pathToPublish: code-review-report.md
+      artifactName: erix-review-report
+    displayName: "Publish review report"
+
+# For a separate nightly audit pipeline, create a second YAML file
+# (azure-pipelines-audit.yml) with a `schedules:` block:
+#
+# schedules:
+#   - cron: "0 3 * * *"
+#     displayName: Nightly AI audit
+#     branches: { include: [main] }
+#     always: true
+#
+# steps:
+#   - script: npx --yes @ecodrix/erix-buddy --full --severity major --max-files 300
+#     env: { GEMINI_API_KEY: $(GEMINI_API_KEY) }
