@@ -1,0 +1,104 @@
+name: "Erix Buddy AI Code Reviewer"
+description: "Bring-your-own-key AI code reviewer supporting Gemini, OpenAI, Anthropic, Ollama, Groq, and more."
+author: "ECODrix"
+branding:
+  icon: "git-pull-request"
+  color: "purple"
+
+inputs:
+  provider:
+    description: "LLM provider id: gemini | vertex | openai | anthropic | ollama | openrouter | groq | azure-openai | deepseek | mistral | xai | ecodrix"
+    required: false
+    default: "gemini"
+  api-key:
+    description: "API key for the chosen provider. Use a repository secret."
+    required: false
+  model:
+    description: "Model id (provider-specific). Falls back to the provider's recommended default."
+    required: false
+  mode:
+    description: "Review mode: branch | staged | last | unstaged | full | audit"
+    required: false
+    default: "branch"
+  branch:
+    description: "Base branch ref to diff against in branch mode"
+    required: false
+    default: "origin/main"
+  severity:
+    description: "Minimum severity to report: critical | major | minor | nitpick | info"
+    required: false
+    default: "minor"
+  concurrency:
+    description: "Parallel file reviews"
+    required: false
+    default: "4"
+  report-path:
+    description: "Markdown report output path"
+    required: false
+    default: "code-review-report.md"
+  fail-on-blocking:
+    description: "Exit non-zero when critical/major issues are found"
+    required: false
+    default: "true"
+  post-pr-comment:
+    description: "Post (or update) a sticky PR comment with the markdown report"
+    required: false
+    default: "true"
+  custom-instructions:
+    description: "Free-form project-specific guidelines injected into the system prompt"
+    required: false
+  full-root:
+    description: "Subdirectory root for full-codebase audit mode"
+    required: false
+    default: "."
+  paths:
+    description: "Comma- or newline-separated path filters (regex/substring) for audit mode"
+    required: false
+  max-files:
+    description: "Cap files reviewed in audit mode"
+    required: false
+    default: "500"
+  vertex-project:
+    description: "Google Cloud project id (only for provider=vertex)"
+    required: false
+  vertex-location:
+    description: "Vertex AI region (only for provider=vertex)"
+    required: false
+    default: "us-central1"
+  base-url:
+    description: "Override the provider's API base URL (Azure / Ollama / custom relays)"
+    required: false
+  azure-deployment:
+    description: "Azure OpenAI deployment name (only for provider=azure-openai)"
+    required: false
+
+outputs:
+  report-path:
+    description: "Path to the generated markdown report"
+    value: ${{ steps.run-reviewer.outputs.report-path }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: run-reviewer
+      run: npx -y --package=@ecodrix/erix-buddy erix-buddy-action
+      shell: bash
+      env:
+        INPUT_PROVIDER: ${{ inputs.provider }}
+        INPUT_API_KEY: ${{ inputs.api-key }}
+        INPUT_MODEL: ${{ inputs.model }}
+        INPUT_MODE: ${{ inputs.mode }}
+        INPUT_BRANCH: ${{ inputs.branch }}
+        INPUT_SEVERITY: ${{ inputs.severity }}
+        INPUT_CONCURRENCY: ${{ inputs.concurrency }}
+        INPUT_REPORT_PATH: ${{ inputs.report-path }}
+        INPUT_FAIL_ON_BLOCKING: ${{ inputs.fail-on-blocking }}
+        INPUT_POST_PR_COMMENT: ${{ inputs.post-pr-comment }}
+        INPUT_CUSTOM_INSTRUCTIONS: ${{ inputs.custom-instructions }}
+        INPUT_FULL_ROOT: ${{ inputs.full-root }}
+        INPUT_PATHS: ${{ inputs.paths }}
+        INPUT_MAX_FILES: ${{ inputs.max-files }}
+        INPUT_VERTEX_PROJECT: ${{ inputs.vertex-project }}
+        INPUT_VERTEX_LOCATION: ${{ inputs.vertex-location }}
+        INPUT_BASE_URL: ${{ inputs.base-url }}
+        INPUT_AZURE_DEPLOYMENT: ${{ inputs.azure-deployment }}

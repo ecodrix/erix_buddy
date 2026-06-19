@@ -1,0 +1,21 @@
+# GitLab CI integration for erix-buddy
+# Bring your own provider key via masked CI variables.
+
+erix-review:
+  stage: test
+  image: node:20-alpine
+  variables:
+    GIT_DEPTH: 0
+  script:
+    - apk add --no-cache git
+    - npx --yes @ecodrix/erix-buddy
+        --branch origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+        --severity minor
+        --format markdown,console
+  artifacts:
+    when: always
+    paths:
+      - code-review-report.md
+    expire_in: 1 week
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"

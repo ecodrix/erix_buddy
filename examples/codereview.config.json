@@ -1,0 +1,21 @@
+{
+  "model": "gemini-2.5-flash",
+  "concurrency": 4,
+  "severityThreshold": "minor",
+  "enableWalkthrough": true,
+  "enableMermaid": true,
+  "enableArchitectureReview": true,
+  "enableTestCoverage": true,
+  "ignorePatterns": ["tests/.*", "scripts/legacy/.*", "src/generated/.*"],
+  "categories": [
+    "security",
+    "correctness",
+    "performance",
+    "architecture",
+    "maintainability",
+    "testing",
+    "documentation",
+    "design-system"
+  ],
+  "customInstructions": "Multi-tenant SaaS: every query must include a tenant scope. Public functions must have JSDoc. Prefer Zod for runtime validation."
+}
