@@ -10,6 +10,18 @@ All notable changes to Erix Buddy are documented here. The format follows [Keep 
 - `doctor` subcommand — diagnoses local setup (git, providers, config validity).
 - Public-repo restructure: `docs/`, expanded `examples/`, `.github/` community templates.
 
+### Changed
+
+- **Recommended `.erixignore` now excludes tests, test-support, and one-off
+  scripts by default** (in addition to generated/build/vendor). Reviewing a
+  large monorepo previously scanned thousands of `*.test.ts` and `scripts/**`
+  files — burning tokens and hitting the `--max-files` cap before reaching real
+  application source. The expanded template ([`examples/erixignore.example`](examples/erixignore.example))
+  keeps audits focused on shippable code. The same `.erixignore` is honored by
+  both the local CLI and the GitHub Action. See
+  [`docs/configuration.md`](docs/configuration.md#erixignore). To review tests or
+  scripts intentionally, delete the relevant block or scope with `--path`.
+
 ## [0.2.0] - 2026-06-19
 
 ### Added

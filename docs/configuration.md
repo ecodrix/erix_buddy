@@ -57,19 +57,59 @@ Drop a file at the repo root:
 
 ## `.erixignore`
 
-Use a `.gitignore`-style file at the repo root. One pattern per line. Lines starting with `re:` are treated as regex.
+Use a `.gitignore`-style file at the repo root. One pattern per line. Lines starting with `re:` are treated as regex. **The same file is honored by both the local CLI and the GitHub Action** — set it once, ignored everywhere.
+
+`erix-buddy init` scaffolds a `.erixignore` for you. The **recommended default keeps
+reviews focused on shippable source and excludes the high-volume, low-signal
+paths**: tests, one-off scripts, generated code, and build output. Without this,
+an audit of a large monorepo wastes tokens reviewing thousands of test/script
+files (and hits the `--max-files` cap before reaching real source).
+
+Recommended starting point (see [`examples/erixignore.example`](../examples/erixignore.example) for the full version):
 
 ```
+# Tests
+**/__tests__/**
+**/e2e/**
+**/*.test.*
+**/*.spec.*
+re:.*\.(test|spec|bench|property)\.(ts|tsx|js|jsx|mjs|cjs|py)$
+
+# Test support: mocks / fixtures / snapshots / harnesses
+**/__mocks__/**
+**/__fixtures__/**
+**/__snapshots__/**
+**/test-support/**
+
+# One-off scripts / tooling
+scripts/**
+tools/**
+
 # Generated code
 src/generated/**
-**/__snapshots__/**
+**/__generated__/**
+**/*.d.ts
 
-# Vendor copies
+# Build artefacts / caches
+dist/**
+build/**
+coverage/**
+.next/**
+.turbo/**
+.cache/**
+
+# DB migrations (machine-authored)
+**/migrations/**
+
+# Vendor / lockfiles / built assets
 vendor/**
-
-# Regex patterns prefixed with re:
-re:.*\.spec\.ts$
+**/*.lock
+**/*.min.js
+public/**
 ```
+
+To **review** tests or scripts on purpose, delete the relevant block — or scope a
+one-off run with `--path` (e.g. `--full --path "src/**"`).
 
 Patterns combine additively with `ignorePatterns` from the config file.
 
