@@ -1,27 +1,73 @@
 # Erix Buddy ignore file.
 # Same syntax as .gitignore. Lines starting with `re:` are treated as regex.
 # Drop into your repo root as `.erixignore`.
+#
+# This is the RECOMMENDED default. It keeps reviews focused on shippable
+# application/library source and skips the high-volume, low-signal paths
+# (tests, one-off scripts, generated code, build output). Honored identically
+# by the local CLI and the GitHub Action.
+# Remove any block below if you DO want those files reviewed.
 
-# Generated code
-src/generated/**
-**/__generated__/**
+# ── Tests (unit / integration / e2e / property / bench) ─────────────────────
+**/__tests__/**
+**/test/**
+**/tests/**
+**/e2e/**
+**/*.test.*
+**/*.spec.*
+re:.*\.(test|spec|bench|property)\.(ts|tsx|js|jsx|mjs|cjs|py)$
+
+# ── Test support: mocks, fixtures, snapshots, harnesses ─────────────────────
+**/__mocks__/**
+**/__fixtures__/**
+**/fixtures/**
 **/__snapshots__/**
+**/test-support/**
+**/test-utils/**
+**/*.setup.*
+**/setup-tests.*
 
-# Vendor / third-party copies
-vendor/**
-third_party/**
+# ── One-off scripts / tooling (not shipped application logic) ───────────────
+scripts/**
+tools/**
+bin/**
 
-# Build artefacts
+# ── Generated code ──────────────────────────────────────────────────────────
+src/generated/**
+**/generated/**
+**/__generated__/**
+**/*.gen.*
+**/*.d.ts
+
+# ── Build artefacts / caches ────────────────────────────────────────────────
 dist/**
 build/**
+out/**
+coverage/**
 .next/**
 .turbo/**
 .cache/**
+.vercel/**
 
-# Tests (we don't review tests by default; remove this if you want to)
-re:.*\.test\.ts$
-re:.*\.spec\.ts$
-re:.*\.test\.py$
-
-# Migrations are usually intentional
+# ── DB migrations (usually intentional, machine-authored) ───────────────────
 **/migrations/**
+
+# ── Vendor / third-party copies ─────────────────────────────────────────────
+vendor/**
+third_party/**
+node_modules/**
+
+# ── Lockfiles, minified bundles, static/built public assets ─────────────────
+**/*.lock
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+**/*.min.js
+**/*.min.css
+public/**
+
+# ── Optional: docs & config (uncomment to also skip these) ──────────────────
+# **/*.md
+# **/*.json
+# **/*.yml
+# **/*.yaml
