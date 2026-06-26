@@ -31,7 +31,7 @@ jobs:
             && echo "Ollama is up" \
             || (echo "Ollama not reachable at localhost:11434" && exit 1)
 
-      - uses: ecodrix/erix-buddy@v1
+      - uses: ecodrix/erix_buddy@v1
         with:
           provider: ollama
           model: qwen2.5-coder:7b      # or llama3.1:8b, deepseek-r1:14b, etc.

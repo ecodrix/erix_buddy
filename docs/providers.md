@@ -24,7 +24,7 @@ Erix Buddy is **provider-agnostic** — pick whatever LLM you have a key for, or
 ### Google Gemini API (`gemini`)
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     provider: gemini
     api-key: ${{ secrets.GEMINI_API_KEY }}
@@ -36,7 +36,7 @@ Get a key from [Google AI Studio](https://aistudio.google.com/apikey).
 ### Google Vertex AI (`vertex`)
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     provider: vertex
     vertex-project: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
@@ -49,7 +49,7 @@ Vertex uses application default credentials; the action expects them to be set (
 ### OpenAI (`openai`)
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     provider: openai
     api-key: ${{ secrets.OPENAI_API_KEY }}
@@ -59,7 +59,7 @@ Vertex uses application default credentials; the action expects them to be set (
 ### Anthropic Claude (`anthropic`)
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     provider: anthropic
     api-key: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -72,7 +72,7 @@ Claude does not have native JSON-mode; we coax JSON via prompting. Quality is ex
 
 ```yaml
 - runs-on: self-hosted # ← runner must have Ollama installed
-  uses: ecodrix/erix-buddy@v1
+  uses: ecodrix/erix_buddy@v1
   with:
     provider: ollama
     model: qwen2.5-coder:7b
@@ -91,7 +91,7 @@ Recommended models: `qwen2.5-coder:7b` (best code reasoning at this size), `llam
 ### OpenRouter (`openrouter`)
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     provider: openrouter
     api-key: ${{ secrets.OPENROUTER_API_KEY }}
@@ -103,7 +103,7 @@ OpenRouter routes to 200+ models with one key — handy for matrix testing. We d
 ### Groq (`groq`)
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     provider: groq
     api-key: ${{ secrets.GROQ_API_KEY }}
@@ -115,7 +115,7 @@ Groq is **very** fast (typically 5–10× faster than other providers). Great fo
 ### Azure OpenAI (`azure-openai`)
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     provider: azure-openai
     api-key: ${{ secrets.AZURE_OPENAI_API_KEY }}
@@ -129,7 +129,7 @@ The `model` input on Azure is the deployment name, not the OpenAI model id.
 ### DeepSeek (`deepseek`)
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     provider: deepseek
     api-key: ${{ secrets.DEEPSEEK_API_KEY }}
@@ -139,7 +139,7 @@ The `model` input on Azure is the deployment name, not the OpenAI model id.
 ### Mistral AI (`mistral`)
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     provider: mistral
     api-key: ${{ secrets.MISTRAL_API_KEY }}
@@ -149,7 +149,7 @@ The `model` input on Azure is the deployment name, not the OpenAI model id.
 ### xAI Grok (`xai`)
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     provider: xai
     api-key: ${{ secrets.XAI_API_KEY }}
@@ -159,7 +159,7 @@ The `model` input on Azure is the deployment name, not the OpenAI model id.
 ### ECODrix Hosted (`ecodrix`)
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     provider: ecodrix
     api-key: ${{ secrets.ECODRIX_REVIEWER_TOKEN }}
@@ -177,4 +177,4 @@ The optional ECODrix-hosted relay for users who don't want to bring their own ke
 
 ## Adding a new provider
 
-If we don't ship support for your favourite provider yet, please [open an issue](https://github.com/ecodrix/erix-buddy/issues/new?template=feature_request.yml). Most providers are an OpenAI-compatible chat-completions endpoint — they take ~30 minutes to add.
+If we don't ship support for your favourite provider yet, please [open an issue](https://github.com/ecodrix/erix_buddy/issues/new?template=feature_request.yml). Most providers are an OpenAI-compatible chat-completions endpoint — they take ~30 minutes to add.

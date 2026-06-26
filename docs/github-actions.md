@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - uses: ecodrix/erix-buddy@v1
+      - uses: ecodrix/erix_buddy@v1
         with:
           provider: gemini
           api-key: ${{ secrets.GEMINI_API_KEY }}
@@ -88,7 +88,7 @@ For nightly audits, use `schedule:` — see [`examples/nightly-audit.yml`](../ex
 
 ```yaml
 - id: review
-  uses: ecodrix/erix-buddy@v1
+  uses: ecodrix/erix_buddy@v1
   with: { ... }
 
 - run: cat ${{ steps.review.outputs.report-path }}
@@ -97,7 +97,7 @@ For nightly audits, use `schedule:` — see [`examples/nightly-audit.yml`](../ex
 ## Failing the build on critical issues
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     severity: major
     fail-on-blocking: "true"
@@ -108,7 +108,7 @@ Combined with branch protection rules, this gates merges on AI review.
 ## Uploading SARIF to GitHub Security
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   id: review
   with:
     provider: gemini
@@ -129,7 +129,7 @@ runs-on: self-hosted # must have Ollama running
 steps:
   - uses: actions/checkout@v4
     with: { fetch-depth: 0 }
-  - uses: ecodrix/erix-buddy@v1
+  - uses: ecodrix/erix_buddy@v1
     with:
       provider: ollama
       model: qwen2.5-coder:7b
@@ -170,9 +170,9 @@ if: |
 Pin to a specific version for reproducibility:
 
 ```yaml
-uses: ecodrix/erix-buddy@v1.2.3   # pinned to exact version
+uses: ecodrix/erix_buddy@v1.2.3   # pinned to exact version
 # or
-uses: ecodrix/erix-buddy@v1       # latest v1.x.x
+uses: ecodrix/erix_buddy@v1       # latest v1.x.x
 ```
 
 We follow semver. Major-version branches (`v1`, `v2`) track the latest release in that major.

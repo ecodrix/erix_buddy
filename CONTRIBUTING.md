@@ -4,7 +4,7 @@ Thanks for considering a contribution! Erix Buddy is small, opinionated, and ope
 
 ## Repository layout
 
-- This public repo (`ecodrix/erix-buddy`) contains the **GitHub Action manifest, documentation, and example workflows**.
+- This public repo (`ecodrix/erix_buddy`) contains the **GitHub Action manifest, documentation, and example workflows**.
 - The **runtime code** (CLI, providers, reporters, action runner) lives in the npm package `@ecodrix/erix-buddy` and is published from a separate repo. Issues and PRs about runtime behaviour can still be filed here — we triage and route them.
 
 ## What we love receiving
@@ -17,7 +17,7 @@ Thanks for considering a contribution! Erix Buddy is small, opinionated, and ope
 
 ## Filing an issue
 
-1. Search [existing issues](https://github.com/ecodrix/erix-buddy/issues) first.
+1. Search [existing issues](https://github.com/ecodrix/erix_buddy/issues) first.
 2. Use the appropriate template (bug, feature, recipe).
 3. Include: provider, model, action version, and a redacted excerpt of the workflow if relevant.
 4. **Never paste API keys, tokens, or secrets.** Redact them. Use `***` placeholders.

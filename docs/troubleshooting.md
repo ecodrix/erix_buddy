@@ -73,7 +73,7 @@ The reporter looks for an HTML comment marker in existing comments to update. If
   with:
     credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     provider: vertex
     vertex-project: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
@@ -115,6 +115,6 @@ LLMs hallucinate. Mitigations:
 
 ## Still stuck?
 
-- Search [existing issues](https://github.com/ecodrix/erix-buddy/issues).
-- Open a [bug report](https://github.com/ecodrix/erix-buddy/issues/new?template=bug_report.yml) with provider, model, action version, and a redacted log.
-- Ask in [Discussions](https://github.com/ecodrix/erix-buddy/discussions).
+- Search [existing issues](https://github.com/ecodrix/erix_buddy/issues).
+- Open a [bug report](https://github.com/ecodrix/erix_buddy/issues/new?template=bug_report.yml) with provider, model, action version, and a redacted log.
+- Ask in [Discussions](https://github.com/ecodrix/erix_buddy/discussions).

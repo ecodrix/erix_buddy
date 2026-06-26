@@ -5,7 +5,7 @@
 [![GitHub Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-erix--buddy-purple?logo=github)](https://github.com/marketplace/actions/erix-buddy)
 [![npm](https://img.shields.io/npm/v/@ecodrix/erix-buddy.svg)](https://www.npmjs.com/package/@ecodrix/erix-buddy)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Stars](https://img.shields.io/github/stars/ecodrix/erix-buddy?style=social)](https://github.com/ecodrix/erix-buddy)
+[![Stars](https://img.shields.io/github/stars/ecodrix/erix_buddy?style=social)](https://github.com/ecodrix/erix_buddy)
 
 Erix Buddy is a CodeRabbit-style PR / codebase reviewer that runs as a GitHub Action **or** locally as a CLI. It produces walkthroughs, mermaid sequence diagrams, severity-tiered findings, suggested patches, SARIF, GitHub annotations, and risk-scored markdown reports — using **any LLM provider you have a key for**.
 
@@ -75,7 +75,7 @@ jobs:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 } # full history for branch diffs
 
-      - uses: ecodrix/erix-buddy@v1
+      - uses: ecodrix/erix_buddy@v1
         with:
           provider: gemini
           api-key: ${{ secrets.GEMINI_API_KEY }}
@@ -182,7 +182,7 @@ npx @ecodrix/erix-buddy --provider ollama --model qwen2.5-coder:7b
 | Self-hostable                         |     ❌     |              ✅               |
 | Cost                                  | $24/dev/mo | $0 + your provider's metering |
 
-We're not pretending to have full parity yet — see the [roadmap](https://github.com/ecodrix/erix-buddy/blob/main/ROADMAP.md). But the trade-off is clear: own your tooling, choose your model, pay only for the tokens you actually use.
+We're not pretending to have full parity yet — see the [roadmap](https://github.com/ecodrix/erix_buddy/blob/main/ROADMAP.md). But the trade-off is clear: own your tooling, choose your model, pay only for the tokens you actually use.
 
 ---
 

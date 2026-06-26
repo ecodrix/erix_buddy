@@ -53,7 +53,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
-      - uses: ecodrix/erix-buddy@v1
+      - uses: ecodrix/erix_buddy@v1
         with:
           provider: gemini
           api-key: ${{ secrets.GEMINI_API_KEY }}

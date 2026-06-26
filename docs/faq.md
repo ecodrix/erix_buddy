@@ -18,7 +18,7 @@ Yes — they're meant to be checked in. They contain no secrets.
 
 ## What's the difference between `@ecodrix/erix-buddy` and the GitHub Action?
 
-- **`ecodrix/erix-buddy@v1`** is the GitHub Action (this public repo). It contains only `action.yml` + docs. The action delegates to the npm runtime.
+- **`ecodrix/erix_buddy@v1`** is the GitHub Action (this public repo). It contains only `action.yml` + docs. The action delegates to the npm runtime.
 - **`@ecodrix/erix-buddy`** is the npm package — the actual reviewer code, CLI, and providers. The action runs it via `npx` at execution time.
 
 You only ever interact with the action in CI, and the npm package locally.
@@ -33,7 +33,7 @@ You only ever interact with the action in CI, and the npm package locally.
 | Self-hostable / air-gapped |     ❌     |         ✅ via Ollama         |
 | Cost                       | $24/dev/mo | $0 + your provider's metering |
 
-We're not at full feature parity — see the [roadmap](https://github.com/ecodrix/erix-buddy/blob/main/ROADMAP.md). But if you want to own the tooling and pay only for what you use, this is for you.
+We're not at full feature parity — see the [roadmap](https://github.com/ecodrix/erix_buddy/blob/main/ROADMAP.md). But if you want to own the tooling and pay only for what you use, this is for you.
 
 ## Does it support languages other than TypeScript?
 

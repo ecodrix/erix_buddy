@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 0   # full history for branch diffs
 
       - name: Erix AI Code Reviewer
-        uses: ecodrix/erix-buddy@v1
+        uses: ecodrix/erix_buddy@v1
         with:
           # Pick any provider you have a key for. Swap as needed.
           provider: gemini

@@ -120,7 +120,7 @@ Every config field has a corresponding action input where it makes sense for CI.
 Common ones:
 
 ```yaml
-- uses: ecodrix/erix-buddy@v1
+- uses: ecodrix/erix_buddy@v1
   with:
     severity: minor # config: severityThreshold
     concurrency: 4 # config: concurrency
